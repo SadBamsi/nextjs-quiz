@@ -29,18 +29,34 @@ const Home: NextPage = () => {
   const [bigData, setBigData] = useState(null);
   const [data, setData] = useState<IDataProps[]>([]);
   const [theme, setTheme] = useState("");
+  const [isDisabled, setIsDisabled] = useState(false);
   const [infoAboutGame, setInfoAboutGame] = useState({
     counter: 0,
     right: 0,
     wrong: 0,
   });
 
-  const changeInfo = (isRight: boolean) =>
-    isRight ? 
-      setInfoAboutGame((prev) => ({ ...prev, counter: ++prev.counter, right: ++prev.right })) : setInfoAboutGame((prev) => ({ ...prev, counter: ++prev.counter, wrong: ++prev.wrong }))
-  
-  const restartGame = () => setInfoAboutGame((prev) => ({ right: 0, wrong: 0, counter: 0 }))
-  
+  const changeInfo = (isRight: boolean) => {
+    setIsDisabled(prev => !prev);
+    setTimeout(() => {
+      isRight
+        ? setInfoAboutGame((prev) => ({
+            ...prev,
+            counter: ++prev.counter,
+            right: ++prev.right,
+          }))
+        : setInfoAboutGame((prev) => ({
+            ...prev,
+            counter: ++prev.counter,
+            wrong: ++prev.wrong,
+        }));
+      setIsDisabled(prev => !prev);
+    }, 1000);
+  };
+
+  const restartGame = () =>
+    setInfoAboutGame((prev) => ({ right: 0, wrong: 0, counter: 0 }));
+
   useMemo(() => {
     getData().then((res) => res.json().then((res) => setBigData(res)));
   }, []);
@@ -49,29 +65,32 @@ const Home: NextPage = () => {
     if (infoAboutGame.counter < 10) {
       bigData && setData(randomArr(bigData));
       setTheme(themes[Math.floor(Math.random() * themes.length)]);
-     }
+    }
   }, [bigData, infoAboutGame]);
 
   return (
     <>
       <Head>
         <title>MyQuiz</title>
-        <meta name="description" content="Quiz by Maslov Oleg, created by Next.JS" />
+        <meta
+          name="description"
+          content="Quiz by Maslov Oleg, created by Next.JS"
+        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <MainScreen>
-          {data.length === 0 ? (
-            <Spinner />
-        ) : (infoAboutGame.counter < 10 ? (
+      <MainScreen isDisabled={isDisabled}>
+        {data.length === 0 ? (
+          <Spinner />
+        ) : infoAboutGame.counter < 10 ? (
           <Quiz
-          changeInfo={changeInfo}
-          rightAnswer={data[Math.floor(Math.random() * data.length)]}
-          theme={theme}
-          data={data}
-        />
-          ) : (<Statistics restartGame={restartGame} data={infoAboutGame} />)
-          )}
-
+            changeInfo={changeInfo}
+            rightAnswer={data[Math.floor(Math.random() * data.length)]}
+            theme={theme}
+            data={data}
+          />
+        ) : (
+          <Statistics restartGame={restartGame} data={infoAboutGame} />
+        )}
       </MainScreen>
     </>
   );

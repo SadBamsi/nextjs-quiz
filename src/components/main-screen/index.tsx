@@ -1,7 +1,9 @@
 import { StyledMainScreen } from "./styled";
 
-interface IProps {}
+interface IProps {
+  isDisabled: boolean;
+}
 
-export const MainScreen: React.FC<IProps> = ({ children }) => {
-  return <StyledMainScreen>{children}</StyledMainScreen>;
+export const MainScreen: React.FC<IProps> = ({ children, isDisabled }) => {
+  return <StyledMainScreen isDisabled={isDisabled}>{children}</StyledMainScreen>;
 };

@@ -1,4 +1,4 @@
-import React, { DetailsHTMLAttributes, HTMLAttributes, useState } from "react";
+import React, { DetailsHTMLAttributes, HTMLAttributes, useRef, useState } from "react";
 import { IDataProps } from "../quiz";
 import { StyledAnswer } from "./styled";
 
@@ -15,15 +15,18 @@ export const Answer: React.FC<IProps> = ({
 }) => {
   const [state, setState] = useState(false);
   const [isChecked, setISChecked] = useState(false);
+  const ref = useRef(null)
+
   const checkRightAnswer = (right: any, value: any) => {
     const res = Object.values(right).includes(value);
-    setTimeout(() => changeInfo(res), 1000);
+    changeInfo(res);
     return res
   }
     
 
   return (
     <StyledAnswer
+      ref={ref}
       onClick={() => {
         setState(checkRightAnswer(rightAnswer, value));
         setISChecked((prev) => !prev);
