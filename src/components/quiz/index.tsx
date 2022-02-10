@@ -22,15 +22,15 @@ export interface IDataProps {
 interface IProps {
   data: IDataProps[];
   theme: string;
-  isAnswered: () => void;
   rightAnswer?: IDataProps;
+  changeInfo: (val: boolean) => void;
 }
 
 export const Quiz: React.FC<IProps> = ({
   data,
   theme,
   rightAnswer,
-  isAnswered,
+  changeInfo
 }) => {
   const [phraze, setPhraze] = useState("");
   useLayoutEffect(() => {
@@ -66,7 +66,7 @@ export const Quiz: React.FC<IProps> = ({
         <StyledAnswerArea>
           {data.map((el) => (
             <Answer
-              onCheck={isAnswered}
+              changeInfo={changeInfo}
               rightAnswer={
                 rightAnswer || {
                   name: "",
